@@ -3,6 +3,7 @@ const ClientError = require('../../Commons/exceptions/ClientError')
 const DomainErrorTranslator = require('../../Commons/exceptions/DomainErrorTranslator')
 const users = require('../../Interfaces/http/api/users')
 const authentications = require('../../Interfaces/http/api/authentications')
+const { ERR_MSG_INTERNAL_SERVER_ERROR, STATUS_ERROR, STATUS_FAIL } = require('../../Commons/utils/CommonConstanta')
 
 const createServer = async (container) => {
   const server = Hapi.server({
@@ -32,7 +33,7 @@ const createServer = async (container) => {
       // penanganan client error secara internal.
       if (translatedError instanceof ClientError) {
         const newResponse = h.response({
-          status: 'fail',
+          status: STATUS_FAIL,
           message: translatedError.message
         })
         newResponse.code(translatedError.statusCode)
@@ -46,8 +47,8 @@ const createServer = async (container) => {
 
       // penanganan server error sesuai kebutuhan
       const newResponse = h.response({
-        status: 'error',
-        message: 'terjadi kegagalan pada server kami'
+        status: STATUS_ERROR,
+        message: ERR_MSG_INTERNAL_SERVER_ERROR
       })
       newResponse.code(500)
       return newResponse

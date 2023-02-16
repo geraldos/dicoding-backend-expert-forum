@@ -18,7 +18,8 @@ const {
   ERR_MSG_MUST_SEND_REFRESH_TOKEN,
   ERR_MSG_REFRESH_TOKEN_MUST_STRING,
   ERR_MSG_REFRESH_TOKEN_NOT_VALID,
-  ERR_MSG_REFRESH_TOKEN_NOT_FOUNDED_IN_DATABASE
+  ERR_MSG_REFRESH_TOKEN_NOT_FOUNDED_IN_DATABASE,
+  FAKE_INVALID_REFRESH_TOKEN
 } = require('../../../Commons/utils/CommonConstanta')
 
 describe('/authentications endpoint', () => {
@@ -248,7 +249,7 @@ describe('/authentications endpoint', () => {
         method: 'PUT',
         url: '/authentications',
         payload: {
-          refreshToken: 'invalid_refresh_token'
+          refreshToken: FAKE_INVALID_REFRESH_TOKEN
         }
       })
 

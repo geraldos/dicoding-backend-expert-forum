@@ -2,7 +2,11 @@ const InvariantError = require('../../Commons/exceptions/InvariantError')
 const RegisteredUser = require('../../Domains/users/entities/RegisteredUser')
 const UserRepository = require('../../Domains/users/UserRepository')
 
-const { ERR_MSG_USERNAME_NOT_FINDED } = require('../../Commons/utils/CommonConstanta')
+const {
+  ERR_MSG_USERNAME_NOT_FINDED,
+  ERR_MSG_USERNAME_NOT_AVAILABLE,
+  ERR_MGS_USER_NOT_FOUND
+} = require('../../Commons/utils/CommonConstanta')
 
 class UserRepositoryPostgres extends UserRepository {
   constructor (pool, idGenerator) {
@@ -20,7 +24,7 @@ class UserRepositoryPostgres extends UserRepository {
     const result = await this._pool.query(query)
 
     if (result.rowCount) {
-      throw new InvariantError('username tidak tersedia')
+      throw new InvariantError(ERR_MSG_USERNAME_NOT_AVAILABLE)
     }
   }
 
@@ -62,7 +66,7 @@ class UserRepositoryPostgres extends UserRepository {
     const result = await this._pool.query(query)
 
     if (!result.rowCount) {
-      throw new InvariantError('user tidak ditemukan')
+      throw new InvariantError(ERR_MGS_USER_NOT_FOUND)
     }
 
     const { id } = result.rows[0]

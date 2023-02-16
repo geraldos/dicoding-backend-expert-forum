@@ -1,5 +1,6 @@
 const Jwt = require('@hapi/jwt')
 const InvariantError = require('../../../Commons/exceptions/InvariantError')
+const { FAKE_USERNAME, MOCK_TOKEN } = require('../../../Commons/utils/CommonConstanta')
 const JwtTokenManager = require('../JwtTokenManager')
 
 describe('JwtTokenManager', () => {
@@ -7,10 +8,10 @@ describe('JwtTokenManager', () => {
     it('should create accessToken correctly', async () => {
       // Arrange
       const payload = {
-        username: 'dicoding'
+        username: FAKE_USERNAME
       }
       const mockJwtToken = {
-        generate: jest.fn().mockImplementation(() => 'mock_token')
+        generate: jest.fn().mockImplementation(() => MOCK_TOKEN)
       }
       const jwtTokenManager = new JwtTokenManager(mockJwtToken)
 
@@ -19,7 +20,7 @@ describe('JwtTokenManager', () => {
 
       // Assert
       expect(mockJwtToken.generate).toBeCalledWith(payload, process.env.ACCESS_TOKEN_KEY)
-      expect(accessToken).toEqual('mock_token')
+      expect(accessToken).toEqual(MOCK_TOKEN)
     })
   })
 
@@ -27,10 +28,10 @@ describe('JwtTokenManager', () => {
     it('should create refreshToken correctly', async () => {
       // Arrange
       const payload = {
-        username: 'dicoding'
+        username: FAKE_USERNAME
       }
       const mockJwtToken = {
-        generate: jest.fn().mockImplementation(() => 'mock_token')
+        generate: jest.fn().mockImplementation(() => MOCK_TOKEN)
       }
       const jwtTokenManager = new JwtTokenManager(mockJwtToken)
 
@@ -39,7 +40,7 @@ describe('JwtTokenManager', () => {
 
       // Assert
       expect(mockJwtToken.generate).toBeCalledWith(payload, process.env.REFRESH_TOKEN_KEY)
-      expect(refreshToken).toEqual('mock_token')
+      expect(refreshToken).toEqual(MOCK_TOKEN)
     })
   })
 
@@ -47,7 +48,7 @@ describe('JwtTokenManager', () => {
     it('should throw InvariantError when verification failed', async () => {
       // Arrange
       const jwtTokenManager = new JwtTokenManager(Jwt.token)
-      const accessToken = await jwtTokenManager.createAccessToken({ username: 'dicoding' })
+      const accessToken = await jwtTokenManager.createAccessToken({ username: FAKE_USERNAME })
 
       // Action & Assert
       await expect(jwtTokenManager.verifyRefreshToken(accessToken))
@@ -58,7 +59,7 @@ describe('JwtTokenManager', () => {
     it('should not throw InvariantError when refresh token verified', async () => {
       // Arrange
       const jwtTokenManager = new JwtTokenManager(Jwt.token)
-      const refreshToken = await jwtTokenManager.createRefreshToken({ username: 'dicoding' })
+      const refreshToken = await jwtTokenManager.createRefreshToken({ username: FAKE_USERNAME })
 
       // Action & Assert
       await expect(jwtTokenManager.verifyRefreshToken(refreshToken))
@@ -71,13 +72,13 @@ describe('JwtTokenManager', () => {
     it('should decode payload correctly', async () => {
       // Arrange
       const jwtTokenManager = new JwtTokenManager(Jwt.token)
-      const accessToken = await jwtTokenManager.createAccessToken({ username: 'dicoding' })
+      const accessToken = await jwtTokenManager.createAccessToken({ username: FAKE_USERNAME })
 
       // Action
       const { username: expectedUsername } = await jwtTokenManager.decodePayload(accessToken)
 
       // Action & Assert
-      expect(expectedUsername).toEqual('dicoding')
+      expect(expectedUsername).toEqual(FAKE_USERNAME)
     })
   })
 })

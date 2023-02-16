@@ -1,5 +1,7 @@
 const AddUserUseCase = require('../../../../Applications/use_case/AddUserUseCase')
 
+const { STATUS_SUCCESS } = require('../../../../Commons/utils/CommonConstanta')
+
 class UsersHandler {
   constructor (container) {
     this._container = container
@@ -12,7 +14,7 @@ class UsersHandler {
     const addedUser = await addUserUseCase.execute(request.payload)
 
     const response = h.response({
-      status: 'success',
+      status: STATUS_SUCCESS,
       data: {
         addedUser
       }

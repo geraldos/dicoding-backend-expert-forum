@@ -2,6 +2,11 @@ const bcrypt = require('bcryptjs')
 const AuthenticationError = require('../../../Commons/exceptions/AuthenticationError')
 const BcryptEncryptionHelper = require('../BcryptPasswordHash')
 
+const {
+  FAKE_PLAIN_PASSWORDS,
+  FAKE_ENCRYPTED_PASSWORDS
+} = require('../../../Commons/utils/CommonConstanta')
+
 describe('BcryptEncryptionHelper', () => {
   describe('hash function', () => {
     it('should encrypt password correctly', async () => {
@@ -10,12 +15,12 @@ describe('BcryptEncryptionHelper', () => {
       const bcryptEncryptionHelper = new BcryptEncryptionHelper(bcrypt)
 
       // Action
-      const encryptedPassword = await bcryptEncryptionHelper.hash('plain_password')
+      const encryptedPassword = await bcryptEncryptionHelper.hash(FAKE_PLAIN_PASSWORDS)
 
       // Assert
       expect(typeof encryptedPassword).toEqual('string')
-      expect(encryptedPassword).not.toEqual('plain_password')
-      expect(spyHash).toBeCalledWith('plain_password', 10) // 10 adalah nilai saltRound default untuk BcryptEncryptionHelper
+      expect(encryptedPassword).not.toEqual(FAKE_PLAIN_PASSWORDS)
+      expect(spyHash).toBeCalledWith(FAKE_PLAIN_PASSWORDS, 10) // 10 adalah nilai saltRound default untuk BcryptEncryptionHelper
     })
   })
 
@@ -25,7 +30,7 @@ describe('BcryptEncryptionHelper', () => {
       const bcryptEncryptionHelper = new BcryptEncryptionHelper(bcrypt)
 
       // Act & Assert
-      await expect(bcryptEncryptionHelper.comparePassword('plain_password', 'encrypted_password'))
+      await expect(bcryptEncryptionHelper.comparePassword(FAKE_PLAIN_PASSWORDS, FAKE_ENCRYPTED_PASSWORDS))
         .rejects
         .toThrow(AuthenticationError)
     })

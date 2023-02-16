@@ -1,5 +1,13 @@
 const createServer = require('../createServer')
 
+const {
+  FAKE_USERNAME,
+  FAKE_FULLNAME,
+  FAKE_PASSWORD_SECRET,
+  STATUS_ERROR,
+  ERR_MSG_INTERNAL_SERVER_ERROR
+} = require('../../../Commons/utils/CommonConstanta')
+
 describe('HTTP server', () => {
   it('should response 404 when request unregistered route', async () => {
     // Arrange
@@ -18,9 +26,9 @@ describe('HTTP server', () => {
   it('should handle server error correctly', async () => {
     // Arrange
     const requestPayload = {
-      username: 'dicoding',
-      fullname: 'Dicoding Indonesia',
-      password: 'super_secret'
+      username: FAKE_USERNAME,
+      fullname: FAKE_FULLNAME,
+      password: FAKE_PASSWORD_SECRET
     }
     const server = await createServer({}) // fake injection
 
@@ -34,7 +42,7 @@ describe('HTTP server', () => {
     // Assert
     const responseJson = JSON.parse(response.payload)
     expect(response.statusCode).toEqual(500)
-    expect(responseJson.status).toEqual('error')
-    expect(responseJson.message).toEqual('terjadi kegagalan pada server kami')
+    expect(responseJson.status).toEqual(STATUS_ERROR)
+    expect(responseJson.message).toEqual(ERR_MSG_INTERNAL_SERVER_ERROR)
   })
 })

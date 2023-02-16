@@ -2,6 +2,8 @@ const LoginUserUseCase = require('../../../../Applications/use_case/LoginUserUse
 const RefreshAuthenticationUseCase = require('../../../../Applications/use_case/RefreshAuthenticationUseCase')
 const LogoutUserUseCase = require('../../../../Applications/use_case/LogoutUserUseCase')
 
+const { STATUS_SUCCESS } = require('../../../../Commons/utils/CommonConstanta')
+
 class AuthenticationsHandler {
   constructor (container) {
     this._container = container
@@ -15,7 +17,7 @@ class AuthenticationsHandler {
     const loginUserUseCase = this._container.getInstance(LoginUserUseCase.name)
     const { accessToken, refreshToken } = await loginUserUseCase.execute(request.payload)
     const response = h.response({
-      status: 'success',
+      status: STATUS_SUCCESS,
       data: {
         accessToken,
         refreshToken
@@ -31,7 +33,7 @@ class AuthenticationsHandler {
     const accessToken = await refreshAuthenticationUseCase.execute(request.payload)
 
     return {
-      status: 'success',
+      status: STATUS_SUCCESS,
       data: {
         accessToken
       }
@@ -42,7 +44,7 @@ class AuthenticationsHandler {
     const logoutUserUseCase = this._container.getInstance(LogoutUserUseCase.name)
     await logoutUserUseCase.execute(request.payload)
     return {
-      status: 'success'
+      status: STATUS_SUCCESS
     }
   }
 }
