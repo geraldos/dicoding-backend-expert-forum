@@ -8,15 +8,11 @@ const {
   FAKE_BODY_THREAD,
   FAKE_OWNER_THREAD,
   FAKE_DATE_THREAD,
-  FAKE_ID_THREAD,
   FAKE_OWNER_WITH_WHITE_SPACE,
-  FAKE_ID_WITH_WHITE_SPACE,
   ERR_ADD_THREAD_NEED_PROPERTY,
   ERR_ADD_THREAD_DATA_TYPE_SPECIFICATION,
-  ERR_ADD_THREAD_ID_LIMIT_CHARACTER,
   ERR_ADD_THREAD_OWNER_LIMIT_CHARACTER,
   ERR_ADD_THREAD_TITLE_LIMIT_CHARACTER,
-  ERR_ADD_THREAD_ID_WITH_WHITE_SPACE,
   ERR_ADD_THREAD_OWNER_WITH_WHITE_SPACE
 } = require('../../../../Commons/utils/CommonConstanta')
 
@@ -35,7 +31,6 @@ describe('a AddThread entities', () => {
   it('should throw error when payload did not meet data type specification', () => {
     // Arrange
     const payload = {
-      id: FAKE_BAD_INPUT_VALUE_THREAD,
       title: true,
       body: FAKE_BAD_INPUT_VALUE_THREAD,
       owner: [],
@@ -46,24 +41,9 @@ describe('a AddThread entities', () => {
     expect(() => new AddThread(payload)).toThrowError(ERR_ADD_THREAD_DATA_TYPE_SPECIFICATION)
   })
 
-  it('should throw error when id contains more than 50 character', () => {
-    // Arrange
-    const payload = {
-      id: FAKE_VALUE_GREATER_THAN_LIMIT,
-      title: FAKE_TITLE_THREAD,
-      body: FAKE_BODY_THREAD,
-      owner: FAKE_OWNER_THREAD,
-      date: FAKE_DATE_THREAD
-    }
-
-    // Action and Assert
-    expect(() => new AddThread(payload)).toThrowError(ERR_ADD_THREAD_ID_LIMIT_CHARACTER)
-  })
-
   it('should throw error when title contains more than 50 character', () => {
     // Arrange
     const payload = {
-      id: FAKE_ID_THREAD,
       title: FAKE_VALUE_GREATER_THAN_LIMIT,
       body: FAKE_BODY_THREAD,
       owner: FAKE_OWNER_THREAD,
@@ -77,7 +57,6 @@ describe('a AddThread entities', () => {
   it('should throw error when owner contains more than 30 character', () => {
     // Arrange
     const payload = {
-      id: FAKE_ID_THREAD,
       title: FAKE_TITLE_THREAD,
       body: FAKE_BODY_THREAD,
       owner: FAKE_VALUE_GREATER_THAN_LIMIT,
@@ -88,24 +67,9 @@ describe('a AddThread entities', () => {
     expect(() => new AddThread(payload)).toThrowError(ERR_ADD_THREAD_OWNER_LIMIT_CHARACTER)
   })
 
-  it('should throw error when id contains white space character', () => {
-    // Arrange
-    const payload = {
-      id: FAKE_ID_WITH_WHITE_SPACE,
-      title: FAKE_TITLE_THREAD,
-      body: FAKE_BODY_THREAD,
-      owner: FAKE_OWNER_THREAD,
-      date: FAKE_DATE_THREAD
-    }
-
-    // Action and Assert
-    expect(() => new AddThread(payload)).toThrowError(ERR_ADD_THREAD_ID_WITH_WHITE_SPACE)
-  })
-
   it('should throw error when owner contains white space character', () => {
     // Arrange
     const payload = {
-      id: FAKE_ID_THREAD,
       title: FAKE_TITLE_THREAD,
       body: FAKE_BODY_THREAD,
       owner: FAKE_OWNER_WITH_WHITE_SPACE,
@@ -119,7 +83,6 @@ describe('a AddThread entities', () => {
   it('should create AddThread object correctly', () => {
     // Arrange
     const payload = {
-      id: FAKE_ID_THREAD,
       title: FAKE_TITLE_THREAD,
       body: FAKE_BODY_THREAD,
       owner: FAKE_OWNER_THREAD,
@@ -127,10 +90,9 @@ describe('a AddThread entities', () => {
     }
 
     // Action
-    const { id, title, body, owner, date } = new AddThread(payload)
+    const { title, body, owner, date } = new AddThread(payload)
 
     // Assert
-    expect(id).toEqual(payload.id)
     expect(title).toEqual(payload.title)
     expect(body).toEqual(payload.body)
     expect(owner).toEqual(payload.owner)
