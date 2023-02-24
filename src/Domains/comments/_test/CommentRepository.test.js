@@ -12,6 +12,7 @@ describe('CommentRepository interface', () => {
     await expect(commentRepository.getCommentByThreadId('')).rejects.toThrowError(ERR_COMMENT_REPOSITORY_METHOD_NOT_IMPLEMENTED)
     await expect(commentRepository.verifyCommentAccess('')).rejects.toThrowError(ERR_COMMENT_REPOSITORY_METHOD_NOT_IMPLEMENTED)
     await expect(commentRepository.checkCommentExist('')).rejects.toThrowError(ERR_COMMENT_REPOSITORY_METHOD_NOT_IMPLEMENTED)
+    await expect(commentRepository.checkCommentBelongsToThread('')).rejects.toThrowError(ERR_COMMENT_REPOSITORY_METHOD_NOT_IMPLEMENTED)
     await expect(commentRepository.deleteCommentById('')).rejects.toThrowError(ERR_COMMENT_REPOSITORY_METHOD_NOT_IMPLEMENTED)
   })
 })

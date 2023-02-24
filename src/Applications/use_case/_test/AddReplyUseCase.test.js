@@ -1,9 +1,9 @@
-const AddComment = require('../../../Domains/comments/entities/AddComment')
-const AddedComment = require('../../../Domains/comments/entities/AddedComment')
+const AddReply = require('../../../Domains/replies/entities/AddReply')
+const AddedReply = require('../../../Domains/replies/entities/AddedReply')
+const ReplyRepository = require('../../../Domains/replies/ReplyRepository')
 const CommentRepository = require('../../../Domains/comments/CommentRepository')
-const ThreadRepository = require('../../../Domains/threads/ThreadRepository')
 const AuthenticationTokenManager = require('../../security/AuthenticationTokenManager')
-const AddCommentUseCase = require('../AddCommentUseCase')
+const AddReplyUseCase = require('../AddReplyUseCase')
 
 const {
   FAKE_ID_THREAD,
@@ -11,34 +11,36 @@ const {
   HEADER_AUTHORIZATION,
   ACCESS_TOKEN_WITHOUT_UNDERSCORE,
   FAKE_DATE_THREAD,
-  FAKE_COMMENT_CONTENT,
-  FAKE_COMMENT_ID
+  FAKE_COMMENT_ID,
+  FAKE_REPLY_CONTENT,
+  FAKE_REPLY_ID
 } = require('../../../Commons/utils/CommonConstanta')
 
-describe('AddCommentUseCase', () => {
-  it('should orchestrate the add comment action correctly', async () => {
+describe('AddReplyUseCase', () => {
+  it('should orchestrate the add reply action correctly', async () => {
     // Arrange
     const useCasePayload = {
-      content: FAKE_COMMENT_CONTENT
+      content: FAKE_REPLY_CONTENT
     }
     const useCaseParams = {
-      threadId: FAKE_ID_THREAD
+      threadId: FAKE_ID_THREAD,
+      commentId: FAKE_COMMENT_ID
     }
-    const expectedAddedComment = new AddedComment({
-      id: FAKE_COMMENT_ID,
-      content: FAKE_COMMENT_CONTENT,
+    const expectedAddedReply = new AddedReply({
+      id: FAKE_REPLY_ID,
+      content: FAKE_REPLY_CONTENT,
       owner: FAKE_OWNER_THREAD
     })
-    const expectedAddComment = new AddComment({
-      threadId: FAKE_ID_THREAD,
+    const expectedAddReply = new AddReply({
+      commentId: FAKE_COMMENT_ID,
       owner: FAKE_OWNER_THREAD,
       content: useCasePayload.content,
       date: FAKE_DATE_THREAD
     })
 
     /** arrange creating dependency of use case */
+    const mockReplyRepository = new ReplyRepository()
     const mockCommentRepository = new CommentRepository()
-    const mockThreadRepository = new ThreadRepository()
     const mockAuthenticationTokenManager = new AuthenticationTokenManager()
 
     /** arrange mocking needed function */
@@ -49,31 +51,29 @@ describe('AddCommentUseCase', () => {
     mockAuthenticationTokenManager.decodePayload = jest.fn()
       .mockImplementation(() => Promise.resolve({ id: FAKE_OWNER_THREAD }))
 
-    mockThreadRepository.getThreadById = jest.fn()
+    mockCommentRepository.checkCommentBelongsToThread = jest.fn()
       .mockImplementation(() => Promise.resolve())
 
-    mockCommentRepository.addComment = jest.fn()
-      .mockImplementation(() => Promise.resolve(expectedAddedComment))
+    mockReplyRepository.addReply = jest.fn()
+      .mockImplementation(() => Promise.resolve(expectedAddedReply))
 
     /* arrange creating use case instance */
-    const addCommentUseCase = new AddCommentUseCase({
-      authenticationTokenManager: mockAuthenticationTokenManager,
-      threadRepository: mockThreadRepository,
-      commentRepository: mockCommentRepository
+    const addReplyUseCase = new AddReplyUseCase({
+      replyRepository: mockReplyRepository,
+      commentRepository: mockCommentRepository,
+      authenticationTokenManager: mockAuthenticationTokenManager
     })
 
     // Action
-    const addComment = await addCommentUseCase.execute(useCasePayload, useCaseParams, HEADER_AUTHORIZATION)
+    const addReply = await addReplyUseCase.execute(useCasePayload, useCaseParams, HEADER_AUTHORIZATION)
 
     // Assert
-    expect(addComment).toStrictEqual(expectedAddedComment)
+    expect(addReply).toStrictEqual(expectedAddedReply)
 
     expect(mockAuthenticationTokenManager.getTokenHeader).toBeCalledWith(HEADER_AUTHORIZATION)
     expect(mockAuthenticationTokenManager.verifyAccessToken).toBeCalledWith(ACCESS_TOKEN_WITHOUT_UNDERSCORE)
     expect(mockAuthenticationTokenManager.decodePayload).toBeCalledWith(ACCESS_TOKEN_WITHOUT_UNDERSCORE)
 
-    expect(mockThreadRepository.getThreadById).toBeCalledWith(useCaseParams.threadId)
-
-    expect(mockCommentRepository.addComment).toBeCalledWith(expectedAddComment)
+    expect(mockReplyRepository.addReply).toBeCalledWith(expectedAddReply)
   })
 })

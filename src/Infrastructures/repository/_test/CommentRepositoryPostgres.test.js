@@ -18,7 +18,8 @@ const {
   FAKE_COMMENT_ID,
   ERR_MSG_CANNOT_ACCESS_COMMENT,
   ERR_MSG_COMMENT_NOT_FOUND_IN_THREAD,
-  ERR_MSG_CANNOT_DELETE_COMMENT
+  ERR_MSG_CANNOT_DELETE_COMMENT,
+  ERR_MSG_COMMENT_NOT_FOUND_BELONG_THREAD
 } = require('../../../Commons/utils/CommonConstanta')
 
 describe('CommentRepositoryPostgres', () => {
@@ -96,6 +97,24 @@ describe('CommentRepositoryPostgres', () => {
           threadId: FAKE_ID_THREAD,
           commentId: `${FAKE_COMMENT_ID}4`
         })).rejects.toThrowError(ERR_MSG_COMMENT_NOT_FOUND_IN_THREAD)
+      })
+    })
+
+    describe('checkCommentBelongsToThread function', () => {
+      it('should throw because does not comment in the thread', async () => {
+        // Arrange
+        await UsersTableTestHelper.addUser({ id: FAKE_OWNER_THREAD, username: FAKE_USERNAME })
+        await ThreadsTableTestHelper.addThread({ id: FAKE_ID_THREAD, owner: FAKE_OWNER_THREAD })
+        await CommentTableTestHelper.addComment({ id: FAKE_COMMENT_ID, threadId: FAKE_ID_THREAD })
+
+        // Action
+        const commentRepositoryPostgres = new CommentRepositoryPostgres(pool)
+
+        // Assert
+        await expect(commentRepositoryPostgres.checkCommentBelongsToThread({
+          threadId: FAKE_ID_THREAD,
+          commentId: `${FAKE_COMMENT_ID}4`
+        })).rejects.toThrowError(ERR_MSG_COMMENT_NOT_FOUND_BELONG_THREAD)
       })
     })
 

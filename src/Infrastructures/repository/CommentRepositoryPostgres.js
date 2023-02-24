@@ -3,7 +3,12 @@ const CommentRepository = require('../../Domains/comments/CommentRepository')
 const NotFoundError = require('../../Commons/exceptions/NotFoundError')
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError')
 
-const { ERR_MSG_CANNOT_DELETE_COMMENT, ERR_MSG_CANNOT_ACCESS_COMMENT, ERR_MSG_COMMENT_NOT_FOUND } = require('../../Commons/utils/CommonConstanta')
+const {
+  ERR_MSG_CANNOT_DELETE_COMMENT,
+  ERR_MSG_CANNOT_ACCESS_COMMENT,
+  ERR_MSG_COMMENT_NOT_FOUND,
+  ERR_MSG_COMMENT_NOT_FOUND_BELONG_THREAD
+} = require('../../Commons/utils/CommonConstanta')
 
 class CommentRepositoryPostgres extends CommentRepository {
   constructor (pool, idGenerator) {
@@ -47,6 +52,16 @@ class CommentRepositoryPostgres extends CommentRepository {
 
     const { rows } = await this._pool.query(query)
     if (!rows.length) throw new NotFoundError(ERR_MSG_COMMENT_NOT_FOUND)
+  }
+
+  async checkCommentBelongsToThread ({ commentId, threadId }) {
+    const query = {
+      text: 'SELECT 1 FROM comments WHERE id = $1 AND thread_id = $2',
+      values: [commentId, threadId]
+    }
+
+    const { rows } = await this._pool.query(query)
+    if (!rows[0]) throw new NotFoundError(ERR_MSG_COMMENT_NOT_FOUND_BELONG_THREAD)
   }
 
   async getCommentByThreadId (threadId) {

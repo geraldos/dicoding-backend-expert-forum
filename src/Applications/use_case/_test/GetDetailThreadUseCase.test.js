@@ -1,5 +1,8 @@
 const DetailThread = require('../../../Domains/threads/entities/DetailThread')
+const DetailComment = require('../../../Domains/comments/entities/DetailComment')
+const DetailReply = require('../../../Domains/replies/entities/DetailReply')
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository')
+const CommentRepository = require('../../../Domains/comments/CommentRepository')
 const GetDetailThreadUseCase = require('../GetDetailThreadUseCase')
 
 const {
@@ -9,10 +12,10 @@ const {
   FAKE_DATE_THREAD,
   FAKE_USERNAME,
   FAKE_COMMENT_ID,
-  FAKE_COMMENT_CONTENT
+  FAKE_COMMENT_CONTENT,
+  FAKE_REPLY_ID,
+  FAKE_REPLY_CONTENT
 } = require('../../../Commons/utils/CommonConstanta')
-const DetailComment = require('../../../Domains/comments/entities/DetailComment')
-const CommentRepository = require('../../../Domains/comments/CommentRepository')
 
 describe('GetDetailThreadUseCase', () => {
   it('should orchestrate the get detail thread action correctly', async () => {
@@ -31,13 +34,30 @@ describe('GetDetailThreadUseCase', () => {
       })
     ]
 
+    const expectedDetailReply = [
+      new DetailReply({
+        id: FAKE_REPLY_ID,
+        commentId: FAKE_COMMENT_ID,
+        content: FAKE_REPLY_CONTENT,
+        date: FAKE_DATE_THREAD,
+        username: `${FAKE_USERNAME} geraldo`
+      })
+    ]
+
+    const expectedCommentWithReply = [
+      {
+        ...expectedComment,
+        replies: expectedDetailReply
+      }
+    ]
+
     const expectedDetailThread = new DetailThread({
       id: FAKE_ID_THREAD,
       title: FAKE_TITLE_THREAD,
       body: FAKE_BODY_THREAD,
       date: FAKE_DATE_THREAD,
       username: FAKE_USERNAME,
-      comments: expectedComment
+      comments: expectedCommentWithReply
     })
 
     const mockThreadRepository = new ThreadRepository()
@@ -45,6 +65,9 @@ describe('GetDetailThreadUseCase', () => {
 
     mockThreadRepository.getThreadById = jest.fn()
       .mockImplementation(() => Promise.resolve(expectedDetailThread))
+    mockThreadRepository.getRepliesByThreadId = jest.fn()
+      .mockImplementation(() => Promise.resolve(expectedDetailReply))
+
     mockCommentRepository.getCommentByThreadId = jest.fn()
       .mockImplementation(() => Promise.resolve(expectedComment))
 
