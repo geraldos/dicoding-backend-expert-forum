@@ -30,6 +30,7 @@ describe('GetDetailThreadUseCase', () => {
         username: `${FAKE_USERNAME} geraldo`,
         date: FAKE_DATE_THREAD,
         content: FAKE_COMMENT_CONTENT,
+        deleted: false,
         replies: []
       })
     ]
@@ -44,20 +45,13 @@ describe('GetDetailThreadUseCase', () => {
       })
     ]
 
-    const expectedCommentWithReply = [
-      {
-        ...expectedComment,
-        replies: expectedDetailReply
-      }
-    ]
-
     const expectedDetailThread = new DetailThread({
       id: FAKE_ID_THREAD,
       title: FAKE_TITLE_THREAD,
       body: FAKE_BODY_THREAD,
       date: FAKE_DATE_THREAD,
       username: FAKE_USERNAME,
-      comments: expectedCommentWithReply
+      comments: []
     })
 
     const mockThreadRepository = new ThreadRepository()

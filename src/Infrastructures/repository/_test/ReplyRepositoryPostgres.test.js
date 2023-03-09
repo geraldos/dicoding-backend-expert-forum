@@ -68,6 +68,21 @@ describe('CommentRepositoryPostgres', () => {
     })
 
     describe('verifyReplyAccess function', () => {
+      it('should not throw error when user has access', async () => {
+        // Arrange
+        await UsersTableTestHelper.addUser({ id: FAKE_OWNER_THREAD, username: FAKE_USERNAME })
+        await ThreadsTableTestHelper.addThread({ id: FAKE_ID_THREAD, owner: FAKE_OWNER_THREAD })
+        await CommentTableTestHelper.addComment({ id: FAKE_COMMENT_ID, threadId: FAKE_ID_THREAD })
+        await RepliesTableTestHelper.addReplies({})
+
+        const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool)
+
+        await expect(replyRepositoryPostgres.verifyReplyAccess({
+          owner: FAKE_OWNER_THREAD,
+          replyId: FAKE_REPLY_ID
+        })).resolves.toBeUndefined()
+      })
+
       it('should throw because user does not have authorization', async () => {
         // Arrange
         await UsersTableTestHelper.addUser({ id: FAKE_OWNER_THREAD, username: FAKE_USERNAME })
@@ -86,6 +101,24 @@ describe('CommentRepositoryPostgres', () => {
     })
 
     describe('checkReplyExist function', () => {
+      it('should does not throw error if reply exists', async () => {
+        // Arrange
+        await UsersTableTestHelper.addUser({ id: FAKE_OWNER_THREAD, username: FAKE_USERNAME })
+        await ThreadsTableTestHelper.addThread({ id: FAKE_ID_THREAD, owner: FAKE_OWNER_THREAD })
+        await CommentTableTestHelper.addComment({ id: FAKE_COMMENT_ID, threadId: FAKE_ID_THREAD })
+        await RepliesTableTestHelper.addReplies({})
+
+        // Action
+        const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool)
+
+        // Assert
+        await expect(replyRepositoryPostgres.checkReplyExist({
+          threadId: FAKE_ID_THREAD,
+          commentId: FAKE_COMMENT_ID,
+          replyId: FAKE_REPLY_ID
+        })).resolves.not.toThrowError()
+      })
+
       it('should throw because does not reply in the comment', async () => {
         // Arrange
         await UsersTableTestHelper.addUser({ id: FAKE_OWNER_THREAD, username: FAKE_USERNAME })

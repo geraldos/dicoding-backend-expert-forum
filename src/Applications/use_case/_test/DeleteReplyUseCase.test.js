@@ -1,9 +1,7 @@
 const ReplyRepository = require('../../../Domains/replies/ReplyRepository')
-const AuthenticationTokenManager = require('../../security/AuthenticationTokenManager')
 const DeleteReplyUseCase = require('../DeleteReplyUseCase')
 
 const {
-  ACCESS_TOKEN_WITHOUT_UNDERSCORE,
   FAKE_ID_THREAD,
   FAKE_COMMENT_ID,
   FAKE_OWNER_THREAD,
@@ -13,7 +11,7 @@ const {
 describe('DeleteReplyUseCase', () => {
   it('should orchestrate the delete reply action correctly', async () => {
     // Arrange
-    const useCaseHeader = `Bearer ${ACCESS_TOKEN_WITHOUT_UNDERSCORE}`
+    const useCaseHeader = FAKE_OWNER_THREAD
 
     const useCaseParams = {
       threadId: FAKE_ID_THREAD,
@@ -33,15 +31,7 @@ describe('DeleteReplyUseCase', () => {
       id: FAKE_REPLY_ID
     }
 
-    const mockAuthenticationTokenManager = new AuthenticationTokenManager()
     const mockReplyRepository = new ReplyRepository()
-
-    mockAuthenticationTokenManager.getTokenHeader = jest.fn()
-      .mockImplementation(() => Promise.resolve(ACCESS_TOKEN_WITHOUT_UNDERSCORE))
-    mockAuthenticationTokenManager.verifyAccessToken = jest.fn()
-      .mockImplementation(() => Promise.resolve())
-    mockAuthenticationTokenManager.decodePayload = jest.fn()
-      .mockImplementation(() => Promise.resolve({ id: FAKE_OWNER_THREAD }))
 
     mockReplyRepository.checkReplyExist = jest.fn()
       .mockImplementation(() => Promise.resolve())
@@ -51,17 +41,13 @@ describe('DeleteReplyUseCase', () => {
       .mockImplementation(() => Promise.resolve())
 
     const deleteCommentUseCase = new DeleteReplyUseCase({
-      replyRepository: mockReplyRepository,
-      authenticationTokenManager: mockAuthenticationTokenManager
+      replyRepository: mockReplyRepository
     })
 
     // Action
     await deleteCommentUseCase.execute(useCaseParams, useCaseHeader)
 
     // Assert
-    expect(mockAuthenticationTokenManager.getTokenHeader).toBeCalledWith(useCaseHeader)
-    expect(mockAuthenticationTokenManager.verifyAccessToken).toBeCalledWith(ACCESS_TOKEN_WITHOUT_UNDERSCORE)
-
     expect(mockReplyRepository.checkReplyExist).toBeCalledWith(expectedCheckReply)
     expect(mockReplyRepository.verifyReplyAccess).toBeCalledWith(expectedVerifyReplyAccess)
 

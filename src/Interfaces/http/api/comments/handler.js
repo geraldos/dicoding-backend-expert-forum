@@ -12,11 +12,11 @@ class CommentsHandler {
   }
 
   async postCommentHandler (request, h) {
-    const headerAuthorization = request.headers.authorization
+    const { id: credentials } = request.auth.credentials
     const params = request.params
 
     const addCommentUseCase = this._container.getInstance(AddCommentUseCase.name)
-    const addedComment = await addCommentUseCase.execute(request.payload, params, headerAuthorization)
+    const addedComment = await addCommentUseCase.execute(request.payload, params, credentials)
 
     const response = h.response({
       status: STATUS_SUCCESS,
@@ -30,11 +30,11 @@ class CommentsHandler {
   }
 
   async deleteCommentHandler (request, h) {
-    const headerAuthorization = request.headers.authorization
+    const { id: credentials } = request.auth.credentials
     const params = request.params
 
     const deleteCommentUseCase = this._container.getInstance(DeleteCommentUseCase.name)
-    await deleteCommentUseCase.execute(params, headerAuthorization)
+    await deleteCommentUseCase.execute(params, credentials)
 
     return h.response({
       status: STATUS_SUCCESS

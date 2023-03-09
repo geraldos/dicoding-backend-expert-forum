@@ -18,6 +18,8 @@ class GetDetailThreadUseCase {
         .filter(reply => reply.commentId === comment.id)
         .map(reply => reply.replyDetail)
 
+      comment.content = comment.deleted ? '**komentar telah dihapus**' : comment.content
+
       return comment
     })
 

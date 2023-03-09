@@ -13,10 +13,6 @@ class AuthenticationTokenManager {
     throw new Error(ERR_AUTHENTICATION_TOKEN_MANAGER)
   }
 
-  async verifyAccessToken () {
-    throw new Error(ERR_AUTHENTICATION_TOKEN_MANAGER)
-  }
-
   async getTokenHeader () {
     throw new Error(ERR_AUTHENTICATION_TOKEN_MANAGER)
   }

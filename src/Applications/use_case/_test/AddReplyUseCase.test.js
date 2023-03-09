@@ -2,14 +2,11 @@ const AddReply = require('../../../Domains/replies/entities/AddReply')
 const AddedReply = require('../../../Domains/replies/entities/AddedReply')
 const ReplyRepository = require('../../../Domains/replies/ReplyRepository')
 const CommentRepository = require('../../../Domains/comments/CommentRepository')
-const AuthenticationTokenManager = require('../../security/AuthenticationTokenManager')
 const AddReplyUseCase = require('../AddReplyUseCase')
 
 const {
   FAKE_ID_THREAD,
   FAKE_OWNER_THREAD,
-  HEADER_AUTHORIZATION,
-  ACCESS_TOKEN_WITHOUT_UNDERSCORE,
   FAKE_DATE_THREAD,
   FAKE_COMMENT_ID,
   FAKE_REPLY_CONTENT,
@@ -41,16 +38,8 @@ describe('AddReplyUseCase', () => {
     /** arrange creating dependency of use case */
     const mockReplyRepository = new ReplyRepository()
     const mockCommentRepository = new CommentRepository()
-    const mockAuthenticationTokenManager = new AuthenticationTokenManager()
 
     /** arrange mocking needed function */
-    mockAuthenticationTokenManager.verifyAccessToken = jest.fn()
-      .mockImplementation(() => Promise.resolve())
-    mockAuthenticationTokenManager.getTokenHeader = jest.fn()
-      .mockImplementation(() => Promise.resolve(ACCESS_TOKEN_WITHOUT_UNDERSCORE))
-    mockAuthenticationTokenManager.decodePayload = jest.fn()
-      .mockImplementation(() => Promise.resolve({ id: FAKE_OWNER_THREAD }))
-
     mockCommentRepository.checkCommentBelongsToThread = jest.fn()
       .mockImplementation(() => Promise.resolve())
 
@@ -60,20 +49,18 @@ describe('AddReplyUseCase', () => {
     /* arrange creating use case instance */
     const addReplyUseCase = new AddReplyUseCase({
       replyRepository: mockReplyRepository,
-      commentRepository: mockCommentRepository,
-      authenticationTokenManager: mockAuthenticationTokenManager
+      commentRepository: mockCommentRepository
     })
 
     // Action
-    const addReply = await addReplyUseCase.execute(useCasePayload, useCaseParams, HEADER_AUTHORIZATION)
+    const addReply = await addReplyUseCase.execute(useCasePayload, useCaseParams, FAKE_OWNER_THREAD)
 
     // Assert
     expect(addReply).toStrictEqual(expectedAddedReply)
-
-    expect(mockAuthenticationTokenManager.getTokenHeader).toBeCalledWith(HEADER_AUTHORIZATION)
-    expect(mockAuthenticationTokenManager.verifyAccessToken).toBeCalledWith(ACCESS_TOKEN_WITHOUT_UNDERSCORE)
-    expect(mockAuthenticationTokenManager.decodePayload).toBeCalledWith(ACCESS_TOKEN_WITHOUT_UNDERSCORE)
-
+    expect(mockCommentRepository.checkCommentBelongsToThread).toBeCalledWith({
+      threadId: useCaseParams.threadId,
+      commentId: useCaseParams.commentId
+    })
     expect(mockReplyRepository.addReply).toBeCalledWith(expectedAddReply)
   })
 })

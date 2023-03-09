@@ -169,7 +169,6 @@ describe('/threads endpoint', () => {
       const responseJson = JSON.parse(response.payload)
 
       expect(response.statusCode).toEqual(401)
-      expect(responseJson.status).toEqual(STATUS_FAIL)
       expect(responseJson.message).toEqual(ERR_MSG_MISSING_TOKEN_AUTHENTICATION)
     })
   })

@@ -1,18 +1,19 @@
 const AddComment = require('../../../Domains/comments/entities/AddComment')
 const AddedComment = require('../../../Domains/comments/entities/AddedComment')
 const CommentRepository = require('../../../Domains/comments/CommentRepository')
+const DetailThread = require('../../../Domains/threads/entities/DetailThread')
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository')
-const AuthenticationTokenManager = require('../../security/AuthenticationTokenManager')
 const AddCommentUseCase = require('../AddCommentUseCase')
 
 const {
   FAKE_ID_THREAD,
   FAKE_OWNER_THREAD,
-  HEADER_AUTHORIZATION,
-  ACCESS_TOKEN_WITHOUT_UNDERSCORE,
   FAKE_DATE_THREAD,
   FAKE_COMMENT_CONTENT,
-  FAKE_COMMENT_ID
+  FAKE_COMMENT_ID,
+  FAKE_TITLE_THREAD,
+  FAKE_BODY_THREAD,
+  FAKE_USERNAME
 } = require('../../../Commons/utils/CommonConstanta')
 
 describe('AddCommentUseCase', () => {
@@ -35,45 +36,38 @@ describe('AddCommentUseCase', () => {
       content: useCasePayload.content,
       date: FAKE_DATE_THREAD
     })
+    const expectedGetThreadById = new DetailThread({
+      id: FAKE_ID_THREAD,
+      title: FAKE_TITLE_THREAD,
+      body: FAKE_BODY_THREAD,
+      date: FAKE_DATE_THREAD,
+      username: FAKE_USERNAME,
+      comments: []
+    })
 
     /** arrange creating dependency of use case */
     const mockCommentRepository = new CommentRepository()
     const mockThreadRepository = new ThreadRepository()
-    const mockAuthenticationTokenManager = new AuthenticationTokenManager()
 
     /** arrange mocking needed function */
-    mockAuthenticationTokenManager.verifyAccessToken = jest.fn()
-      .mockImplementation(() => Promise.resolve())
-    mockAuthenticationTokenManager.getTokenHeader = jest.fn()
-      .mockImplementation(() => Promise.resolve(ACCESS_TOKEN_WITHOUT_UNDERSCORE))
-    mockAuthenticationTokenManager.decodePayload = jest.fn()
-      .mockImplementation(() => Promise.resolve({ id: FAKE_OWNER_THREAD }))
-
     mockThreadRepository.getThreadById = jest.fn()
-      .mockImplementation(() => Promise.resolve())
+      .mockImplementation(() => Promise.resolve(expectedGetThreadById))
 
     mockCommentRepository.addComment = jest.fn()
       .mockImplementation(() => Promise.resolve(expectedAddedComment))
 
     /* arrange creating use case instance */
     const addCommentUseCase = new AddCommentUseCase({
-      authenticationTokenManager: mockAuthenticationTokenManager,
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository
     })
 
     // Action
-    const addComment = await addCommentUseCase.execute(useCasePayload, useCaseParams, HEADER_AUTHORIZATION)
+    const addComment = await addCommentUseCase.execute(useCasePayload, useCaseParams, FAKE_OWNER_THREAD)
 
     // Assert
     expect(addComment).toStrictEqual(expectedAddedComment)
-
-    expect(mockAuthenticationTokenManager.getTokenHeader).toBeCalledWith(HEADER_AUTHORIZATION)
-    expect(mockAuthenticationTokenManager.verifyAccessToken).toBeCalledWith(ACCESS_TOKEN_WITHOUT_UNDERSCORE)
-    expect(mockAuthenticationTokenManager.decodePayload).toBeCalledWith(ACCESS_TOKEN_WITHOUT_UNDERSCORE)
-
     expect(mockThreadRepository.getThreadById).toBeCalledWith(useCaseParams.threadId)
-
     expect(mockCommentRepository.addComment).toBeCalledWith(expectedAddComment)
   })
 })
