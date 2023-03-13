@@ -17,6 +17,10 @@ class ReplyRepository {
     throw new Error(ERR_REPLY_REPOSITORY_METHOD_NOT_IMPLEMENTED)
   }
 
+  async getRepliesByThreadId () {
+    throw new Error(ERR_REPLY_REPOSITORY_METHOD_NOT_IMPLEMENTED)
+  }
+
   async deleteReplyById () {
     throw new Error(ERR_REPLY_REPOSITORY_METHOD_NOT_IMPLEMENTED)
   }

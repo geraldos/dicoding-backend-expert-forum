@@ -7,10 +7,10 @@ class AddThreadUseCase {
     this._threadRepository = threadRepository
   }
 
-  async execute (useCasePayload, headerAuthorization) {
+  async execute (useCasePayload, userId) {
     const addThread = new AddThread({
       ...useCasePayload,
-      owner: headerAuthorization,
+      owner: userId,
       date: FAKE_DATE_THREAD
     })
 

@@ -1,7 +1,6 @@
 const AddComment = require('../../../Domains/comments/entities/AddComment')
 const AddedComment = require('../../../Domains/comments/entities/AddedComment')
 const CommentRepository = require('../../../Domains/comments/CommentRepository')
-const DetailThread = require('../../../Domains/threads/entities/DetailThread')
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository')
 const AddCommentUseCase = require('../AddCommentUseCase')
 
@@ -10,10 +9,7 @@ const {
   FAKE_OWNER_THREAD,
   FAKE_DATE_THREAD,
   FAKE_COMMENT_CONTENT,
-  FAKE_COMMENT_ID,
-  FAKE_TITLE_THREAD,
-  FAKE_BODY_THREAD,
-  FAKE_USERNAME
+  FAKE_COMMENT_ID
 } = require('../../../Commons/utils/CommonConstanta')
 
 describe('AddCommentUseCase', () => {
@@ -36,14 +32,6 @@ describe('AddCommentUseCase', () => {
       content: useCasePayload.content,
       date: FAKE_DATE_THREAD
     })
-    const expectedGetThreadById = new DetailThread({
-      id: FAKE_ID_THREAD,
-      title: FAKE_TITLE_THREAD,
-      body: FAKE_BODY_THREAD,
-      date: FAKE_DATE_THREAD,
-      username: FAKE_USERNAME,
-      comments: []
-    })
 
     /** arrange creating dependency of use case */
     const mockCommentRepository = new CommentRepository()
@@ -51,10 +39,9 @@ describe('AddCommentUseCase', () => {
 
     /** arrange mocking needed function */
     mockThreadRepository.getThreadById = jest.fn()
-      .mockImplementation(() => Promise.resolve(expectedGetThreadById))
+      .mockImplementation(() => Promise.resolve({}))
 
-    mockCommentRepository.addComment = jest.fn()
-      .mockImplementation(() => Promise.resolve(expectedAddedComment))
+    mockCommentRepository.addComment = jest.fn(() => (expectedAddedComment))
 
     /* arrange creating use case instance */
     const addCommentUseCase = new AddCommentUseCase({

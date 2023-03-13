@@ -8,13 +8,13 @@ class AddReplyUseCase {
     this._commentRepository = commentRepository
   }
 
-  async execute (useCasePayload, useCaseParams, headerAuthorization) {
+  async execute (useCasePayload, useCaseParams, userId) {
     await this._commentRepository.checkCommentBelongsToThread(useCaseParams)
 
     const addReply = new AddReply({
       ...useCasePayload,
       ...useCaseParams,
-      owner: headerAuthorization,
+      owner: userId,
       date: FAKE_DATE_THREAD
     })
 

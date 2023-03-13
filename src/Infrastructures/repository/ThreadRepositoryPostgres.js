@@ -5,7 +5,6 @@ const NotFoundError = require('../../Commons/exceptions/NotFoundError')
 const {
   ERR_MSG_THREAD_NOT_FOUND
 } = require('../../Commons/utils/CommonConstanta')
-const DetailReply = require('../../Domains/replies/entities/DetailReply')
 
 class ThreadRepositoryPostgres extends ThreadRepository {
   constructor (pool, idGenerator) {
@@ -40,22 +39,6 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     if (!rows.length) throw new NotFoundError(ERR_MSG_THREAD_NOT_FOUND)
 
     return rows[0]
-  }
-
-  async getRepliesByThreadId (id) {
-    const query = {
-      text: `SELECT replies.id, comments.id AS comment_id, 
-      CASE WHEN replies.deleted = TRUE THEN '**balasan telah dihapus **' else replies.content END AS content, replies.date, users.username 
-      FROM replies 
-      INNER JOIN comments ON replies.comment_id = comments.id 
-      INNER JOIN users ON replies.owner = users.id WHERE comments.thread_id = $1 
-      ORDER BY comments.date ASC;`,
-      values: [id]
-    }
-
-    const { rows } = await this._pool.query(query)
-
-    return rows.map((reply) => new DetailReply({ commentId: reply.comment_id, ...reply }))
   }
 }
 

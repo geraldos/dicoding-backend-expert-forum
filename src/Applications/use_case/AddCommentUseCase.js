@@ -8,12 +8,12 @@ class AddCommentUseCase {
     this._threadRepository = threadRepository
   }
 
-  async execute (useCasePayload, useCaseParams, headerAuthorization) {
+  async execute (useCasePayload, useCaseParams, userId) {
     await this._threadRepository.getThreadById(useCaseParams.threadId)
 
     const addComment = new AddComment({
       threadId: useCaseParams.threadId,
-      owner: headerAuthorization,
+      owner: userId,
       ...useCasePayload,
       date: FAKE_DATE_THREAD
     })

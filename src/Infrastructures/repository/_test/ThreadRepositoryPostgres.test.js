@@ -1,6 +1,5 @@
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper')
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper')
-const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper')
 
 const AddThread = require('../../../Domains/threads/entities/AddThread')
 const AddedThread = require('../../../Domains/threads/entities/AddedThread')
@@ -16,13 +15,9 @@ const {
   FAKE_OWNER_THREAD,
   FAKE_FULLNAME,
   FAKE_PASSWORD,
-  FAKE_ID_THREAD,
-  FAKE_COMMENT_ID,
-  FAKE_REPLY_ID,
-  FAKE_COMMENT_CONTENT
+  FAKE_ID_THREAD
 } = require('../../../Commons/utils/CommonConstanta')
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError')
-const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper')
 
 describe('ThreadRepositoryPostgres', () => {
   afterEach(async () => {
@@ -133,41 +128,6 @@ describe('ThreadRepositoryPostgres', () => {
 
       // Assert
       expect(detailThread).toEqual(expectedDetailThread)
-    })
-  })
-
-  describe('getRepliesByThreadId function', () => {
-    it('should return replies in comment thread correctly', async () => {
-      // Arrange
-      await UsersTableTestHelper.addUser({ id: FAKE_OWNER_THREAD, username: FAKE_USERNAME })
-      await ThreadsTableTestHelper.addThread({
-        id: FAKE_ID_THREAD,
-        title: FAKE_TITLE_THREAD,
-        body: FAKE_BODY_THREAD,
-        owner: FAKE_OWNER_THREAD,
-        date: FAKE_DATE_THREAD
-      })
-      await CommentsTableTestHelper.addComment({ id: FAKE_COMMENT_ID, owner: FAKE_OWNER_THREAD, threadId: FAKE_ID_THREAD })
-
-      const reply = {
-        id: FAKE_REPLY_ID,
-        content: FAKE_COMMENT_CONTENT,
-        date: FAKE_DATE_THREAD
-      }
-      const expectedReplies = [
-        {
-          ...reply,
-          username: FAKE_USERNAME
-        }
-      ]
-
-      await RepliesTableTestHelper.addReplies({ ...expectedReplies, owner: FAKE_OWNER_THREAD })
-
-      // Action
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool)
-      const getReplies = await threadRepositoryPostgres.getRepliesByThreadId(FAKE_ID_THREAD)
-
-      expect(getReplies).toEqual(expectedReplies)
     })
   })
 })

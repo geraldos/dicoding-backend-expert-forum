@@ -6,9 +6,9 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper')
 const AddReply = require('../../../Domains/replies/entities/AddReply')
 const AddedReply = require('../../../Domains/replies/entities/AddedReply')
 
-const pool = require('../../database/postgres/pool')
-
 const ReplyRepositoryPostgres = require('../ReplyRepositoryPostgres')
+
+const pool = require('../../database/postgres/pool')
 
 const {
   FAKE_OWNER_THREAD,
@@ -20,7 +20,9 @@ const {
   FAKE_REPLY_ID,
   ERR_MSG_CANNOT_ACCESS_REPLY,
   ERR_MSG_REPLY_NOT_FOUND,
-  ERR_MSG_REPLY_DOES_NOT_EXIST
+  ERR_MSG_REPLY_DOES_NOT_EXIST,
+  FAKE_TITLE_THREAD,
+  FAKE_BODY_THREAD
 } = require('../../../Commons/utils/CommonConstanta')
 
 describe('CommentRepositoryPostgres', () => {
@@ -61,9 +63,11 @@ describe('CommentRepositoryPostgres', () => {
 
         // Action
         const addedReply = await replyRepositoryPostgres.addReply(addReply)
+        const reply = await RepliesTableTestHelper.findReplyById(addedReply.id)
 
         // Assert
         expect(addedReply).toStrictEqual(expectedAddedReply)
+        expect(reply).toBeDefined()
       })
     })
 
@@ -134,6 +138,41 @@ describe('CommentRepositoryPostgres', () => {
           commentId: `${FAKE_COMMENT_ID}`,
           replyId: `${FAKE_REPLY_ID}4`
         })).rejects.toThrowError(ERR_MSG_REPLY_NOT_FOUND)
+      })
+    })
+
+    describe('getRepliesByThreadId function', () => {
+      it('should return replies in comment thread correctly', async () => {
+        // Arrange
+        await UsersTableTestHelper.addUser({ id: FAKE_OWNER_THREAD, username: FAKE_USERNAME })
+        await ThreadsTableTestHelper.addThread({
+          id: FAKE_ID_THREAD,
+          title: FAKE_TITLE_THREAD,
+          body: FAKE_BODY_THREAD,
+          owner: FAKE_OWNER_THREAD,
+          date: FAKE_DATE_THREAD
+        })
+        await CommentTableTestHelper.addComment({ id: FAKE_COMMENT_ID, owner: FAKE_OWNER_THREAD, threadId: FAKE_ID_THREAD })
+
+        const reply = {
+          id: FAKE_REPLY_ID,
+          content: FAKE_COMMENT_CONTENT,
+          date: FAKE_DATE_THREAD
+        }
+        const expectedReplies = [
+          {
+            ...reply,
+            username: FAKE_USERNAME
+          }
+        ]
+
+        await RepliesTableTestHelper.addReplies({ ...expectedReplies, owner: FAKE_OWNER_THREAD })
+
+        // Action
+        const repliesRepositoryPostgres = new ReplyRepositoryPostgres(pool)
+        const getReplies = await repliesRepositoryPostgres.getRepliesByThreadId(FAKE_ID_THREAD)
+
+        expect(getReplies).toEqual(expectedReplies)
       })
     })
 

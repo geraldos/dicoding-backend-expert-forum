@@ -12,6 +12,7 @@ describe('ReplyRepository interface', () => {
     await expect(replyRepository.getReplyByThreadId('')).rejects.toThrowError(ERR_REPLY_REPOSITORY_METHOD_NOT_IMPLEMENTED)
     await expect(replyRepository.verifyReplyAccess('')).rejects.toThrowError(ERR_REPLY_REPOSITORY_METHOD_NOT_IMPLEMENTED)
     await expect(replyRepository.checkReplyExist('')).rejects.toThrowError(ERR_REPLY_REPOSITORY_METHOD_NOT_IMPLEMENTED)
+    await expect(replyRepository.getRepliesByThreadId('')).rejects.toThrowError(ERR_REPLY_REPOSITORY_METHOD_NOT_IMPLEMENTED)
     await expect(replyRepository.deleteReplyById('')).rejects.toThrowError(ERR_REPLY_REPOSITORY_METHOD_NOT_IMPLEMENTED)
   })
 })

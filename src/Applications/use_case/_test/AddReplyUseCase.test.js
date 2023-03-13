@@ -43,8 +43,7 @@ describe('AddReplyUseCase', () => {
     mockCommentRepository.checkCommentBelongsToThread = jest.fn()
       .mockImplementation(() => Promise.resolve())
 
-    mockReplyRepository.addReply = jest.fn()
-      .mockImplementation(() => Promise.resolve(expectedAddedReply))
+    mockReplyRepository.addReply = jest.fn(() => expectedAddedReply)
 
     /* arrange creating use case instance */
     const addReplyUseCase = new AddReplyUseCase({

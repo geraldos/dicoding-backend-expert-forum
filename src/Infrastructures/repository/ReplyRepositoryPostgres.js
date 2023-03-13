@@ -3,6 +3,8 @@ const ReplyRepository = require('../../Domains/replies/ReplyRepository')
 const NotFoundError = require('../../Commons/exceptions/NotFoundError')
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError')
 
+const DetailReply = require('../../Domains/replies/entities/DetailReply')
+
 const {
   ERR_MSG_CANNOT_ACCESS_REPLY,
   ERR_MSG_REPLY_NOT_FOUND,
@@ -53,6 +55,21 @@ class ReplyRepositoryPostgres extends ReplyRepository {
 
     const { rows } = await this._pool.query(query)
     if (!rows.length) throw new NotFoundError(ERR_MSG_REPLY_NOT_FOUND)
+  }
+
+  async getRepliesByThreadId (id) {
+    const query = {
+      text: `SELECT replies.id, comments.id AS comment_id, replies.content AS content, replies.date, users.username, replies.deleted 
+      FROM replies 
+      INNER JOIN comments ON replies.comment_id = comments.id 
+      INNER JOIN users ON replies.owner = users.id WHERE comments.thread_id = $1 
+      ORDER BY comments.date ASC;`,
+      values: [id]
+    }
+
+    const { rows } = await this._pool.query(query)
+
+    return rows.map((reply) => new DetailReply({ commentId: reply.comment_id, ...reply }))
   }
 
   async deleteReplyById (replyId) {
