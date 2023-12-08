@@ -6,7 +6,8 @@ const {
   FAKE_DATE_THREAD,
   ERR_DETAIL_REPLY_NOT_CONTAIN_NEEDED_PROPERTY,
   FAKE_REPLY_CONTENT,
-  ERR_DETAIL_REPLY_NOT_MEET_DATA_SPECIFICATION
+  ERR_DETAIL_REPLY_NOT_MEET_DATA_SPECIFICATION,
+  FAKE_COMMENT_ID
 } = require('../../../../Commons/utils/CommonConstanta')
 
 describe('a DetailReply entities', () => {
@@ -41,7 +42,9 @@ describe('a DetailReply entities', () => {
       id: FAKE_REPLY_ID,
       username: FAKE_USERNAME,
       date: FAKE_DATE_THREAD,
-      content: FAKE_REPLY_CONTENT
+      content: FAKE_REPLY_CONTENT,
+      commentid: FAKE_COMMENT_ID,
+      deleted: false
     }
 
     // Action
@@ -49,7 +52,9 @@ describe('a DetailReply entities', () => {
       id,
       username,
       date,
-      content
+      content,
+      commentid,
+      deleted
     } = new DetailReply(payload)
 
     // Assert
@@ -57,5 +62,7 @@ describe('a DetailReply entities', () => {
     expect(username).toEqual(payload.username)
     expect(date).toEqual(payload.date)
     expect(content).toEqual(payload.content)
+    expect(commentid).toEqual(payload.commentid)
+    expect(deleted).toEqual(payload.deleted)
   })
 })

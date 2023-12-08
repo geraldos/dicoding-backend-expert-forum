@@ -3,8 +3,6 @@ const ReplyRepository = require('../../Domains/replies/ReplyRepository')
 const NotFoundError = require('../../Commons/exceptions/NotFoundError')
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError')
 
-const DetailReply = require('../../Domains/replies/entities/DetailReply')
-
 const {
   ERR_MSG_CANNOT_ACCESS_REPLY,
   ERR_MSG_REPLY_NOT_FOUND,
@@ -20,12 +18,12 @@ class ReplyRepositoryPostgres extends ReplyRepository {
   }
 
   async addReply (addReply) {
-    const { commentId, owner, content, date } = addReply
+    const { commentid, owner, content, date } = addReply
     const id = `reply-${this._idGenerator()}`
 
     const query = {
       text: 'INSERT INTO replies VALUES($1, $2, $3, $4, $5) RETURNING id, content, owner',
-      values: [id, commentId, owner, content, date]
+      values: [id, commentid, owner, content, date]
     }
 
     const { rows } = await this._pool.query(query)
@@ -42,7 +40,7 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     if (!rows.length) throw new AuthorizationError(ERR_MSG_CANNOT_ACCESS_REPLY)
   }
 
-  async checkReplyExist ({ replyId, commentId, threadId }) {
+  async checkReplyExist ({ replyId, commentid, threadId }) {
     const query = {
       text: `SELECT 1 FROM replies
       INNER JOIN comments ON replies.comment_id = comments.id
@@ -50,7 +48,7 @@ class ReplyRepositoryPostgres extends ReplyRepository {
       AND replies.comment_id = $2
       AND comments.thread_id = $3
       AND replies.deleted = false`,
-      values: [replyId, commentId, threadId]
+      values: [replyId, commentid, threadId]
     }
 
     const { rows } = await this._pool.query(query)
@@ -59,17 +57,16 @@ class ReplyRepositoryPostgres extends ReplyRepository {
 
   async getRepliesByThreadId (id) {
     const query = {
-      text: `SELECT replies.id, comments.id AS comment_id, replies.content AS content, replies.date, users.username, replies.deleted 
+      text: `SELECT replies.id, comments.id AS commentid, replies.content AS content, replies.date, users.username, replies.deleted AS deleted
       FROM replies 
       INNER JOIN comments ON replies.comment_id = comments.id 
       INNER JOIN users ON replies.owner = users.id WHERE comments.thread_id = $1 
-      ORDER BY comments.date ASC;`,
+      ORDER BY replies.date ASC;`,
       values: [id]
     }
 
     const { rows } = await this._pool.query(query)
-
-    return rows.map((reply) => new DetailReply({ commentId: reply.comment_id, ...reply }))
+    return rows
   }
 
   async deleteReplyById (replyId) {

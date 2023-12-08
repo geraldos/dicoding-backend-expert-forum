@@ -9,22 +9,24 @@ class GetDetailThreadUseCase {
     const { threadId } = useCaseParams
 
     const detailThread = await this._threadRepository.getThreadById(threadId)
-    detailThread.comments = await this._commentRepository.getCommentByThreadId(threadId)
-
     const threadReplies = await this._replyRepository.getRepliesByThreadId(threadId)
 
-    detailThread.comments.map(comment => {
-      comment.replies = threadReplies
-        .filter(reply => reply.commentId === comment.id)
-        .map(reply => {
-          reply.replyDetail.content = reply.replyDetail.deleted ? '**balasan telah dihapus**' : reply.replyDetail.content
-          return reply.replyDetail
-        })
+    detailThread.comments = await this._commentRepository.getCommentByThreadId(threadId)
 
-      comment.content = comment.deleted ? '**komentar telah dihapus**' : comment.content
+    detailThread.comments
+      .map(comment => {
+        comment.replies = threadReplies
+          .filter(reply => reply.commentid === comment.id)
+          .map(reply => {
+            reply.content = reply.deleted ? '**balasan telah dihapus**' : reply.content
+            return { deleted: reply.deleted, commentid: reply.commentid, ...reply }
+          })
 
-      return comment
-    })
+        comment.content = comment.deleted ? '**komentar telah dihapus**' : comment.content
+        delete comment.deleted
+
+        return comment
+      })
 
     return detailThread
   }

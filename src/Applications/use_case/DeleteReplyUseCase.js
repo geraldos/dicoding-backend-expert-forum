@@ -4,10 +4,10 @@ class DeleteReplyUseCase {
   }
 
   async execute (useCaseParams, useCaseHeader) {
-    const { replyId, threadId, commentId } = useCaseParams
+    const { replyId, threadId, commentid } = useCaseParams
     const owner = useCaseHeader
 
-    await this._replyRepository.checkReplyExist({ replyId, threadId, commentId })
+    await this._replyRepository.checkReplyExist({ replyId, threadId, commentid })
     await this._replyRepository.verifyReplyAccess({ owner, replyId })
     await this._replyRepository.deleteReplyById(replyId)
   }

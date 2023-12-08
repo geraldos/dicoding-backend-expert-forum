@@ -46,7 +46,7 @@ describe('CommentRepositoryPostgres', () => {
         await CommentTableTestHelper.addComment({ id: FAKE_COMMENT_ID, owner: FAKE_OWNER_THREAD })
 
         const addReply = new AddReply({
-          commentId: FAKE_COMMENT_ID,
+          commentid: FAKE_COMMENT_ID,
           owner: FAKE_OWNER_THREAD,
           content: FAKE_COMMENT_CONTENT,
           date: FAKE_DATE_THREAD
@@ -118,7 +118,7 @@ describe('CommentRepositoryPostgres', () => {
         // Assert
         await expect(replyRepositoryPostgres.checkReplyExist({
           threadId: FAKE_ID_THREAD,
-          commentId: FAKE_COMMENT_ID,
+          commentid: FAKE_COMMENT_ID,
           replyId: FAKE_REPLY_ID
         })).resolves.not.toThrowError()
       })
@@ -135,7 +135,7 @@ describe('CommentRepositoryPostgres', () => {
         // Assert
         await expect(replyRepositoryPostgres.checkReplyExist({
           threadId: FAKE_ID_THREAD,
-          commentId: `${FAKE_COMMENT_ID}`,
+          commentid: `${FAKE_COMMENT_ID}`,
           replyId: `${FAKE_REPLY_ID}4`
         })).rejects.toThrowError(ERR_MSG_REPLY_NOT_FOUND)
       })
@@ -157,7 +157,9 @@ describe('CommentRepositoryPostgres', () => {
         const reply = {
           id: FAKE_REPLY_ID,
           content: FAKE_COMMENT_CONTENT,
-          date: FAKE_DATE_THREAD
+          date: FAKE_DATE_THREAD,
+          commentid: FAKE_COMMENT_ID,
+          deleted: false
         }
         const expectedReplies = [
           {
@@ -191,7 +193,7 @@ describe('CommentRepositoryPostgres', () => {
         await UsersTableTestHelper.addUser({ id: FAKE_OWNER_THREAD, username: FAKE_USERNAME })
         await ThreadsTableTestHelper.addThread({ id: FAKE_ID_THREAD, owner: FAKE_OWNER_THREAD })
         await CommentTableTestHelper.addComment({ id: FAKE_COMMENT_ID, threadId: FAKE_ID_THREAD })
-        await RepliesTableTestHelper.addReplies({ id: FAKE_REPLY_ID, commentId: FAKE_COMMENT_ID })
+        await RepliesTableTestHelper.addReplies({ id: FAKE_REPLY_ID, commentid: FAKE_COMMENT_ID })
 
         const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool)
 

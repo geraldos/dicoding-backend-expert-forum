@@ -1,7 +1,5 @@
 const AddReply = require('../../Domains/replies/entities/AddReply')
 
-const { FAKE_DATE_THREAD } = require('../../Commons/utils/CommonConstanta')
-
 class AddReplyUseCase {
   constructor ({ replyRepository, commentRepository }) {
     this._replyRepository = replyRepository
@@ -15,7 +13,7 @@ class AddReplyUseCase {
       ...useCasePayload,
       ...useCaseParams,
       owner: userId,
-      date: FAKE_DATE_THREAD
+      date: new Date().toISOString()
     })
 
     return this._replyRepository.addReply(addReply)

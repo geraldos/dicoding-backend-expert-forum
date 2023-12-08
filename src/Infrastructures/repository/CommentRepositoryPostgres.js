@@ -31,33 +31,33 @@ class CommentRepositoryPostgres extends CommentRepository {
     return new AddedComment({ ...rows[0] })
   }
 
-  async verifyCommentAccess ({ commentId, owner }) {
+  async verifyCommentAccess ({ commentid, owner }) {
     const query = {
       text: 'SELECT 1 FROM comments WHERE id = $1 AND owner = $2',
-      values: [commentId, owner]
+      values: [commentid, owner]
     }
 
     const { rows } = await this._pool.query(query)
     if (!rows.length) throw new AuthorizationError(ERR_MSG_CANNOT_ACCESS_COMMENT)
   }
 
-  async checkCommentExist ({ commentId, threadId }) {
+  async checkCommentExist ({ commentid, threadId }) {
     const query = {
       text: `SELECT 1 FROM comments
       INNER JOIN threads ON comments.thread_id = threads.id
       WHERE threads.id = $1
       AND comments.id = $2`,
-      values: [threadId, commentId]
+      values: [threadId, commentid]
     }
 
     const { rows } = await this._pool.query(query)
     if (!rows.length) throw new NotFoundError(ERR_MSG_COMMENT_NOT_FOUND)
   }
 
-  async checkCommentBelongsToThread ({ commentId, threadId }) {
+  async checkCommentBelongsToThread ({ commentid, threadId }) {
     const query = {
       text: 'SELECT 1 FROM comments WHERE id = $1 AND thread_id = $2',
-      values: [commentId, threadId]
+      values: [commentid, threadId]
     }
 
     const { rows } = await this._pool.query(query)
@@ -79,10 +79,10 @@ class CommentRepositoryPostgres extends CommentRepository {
     return rows
   }
 
-  async deleteCommentById (commentId) {
+  async deleteCommentById (commentid) {
     const query = {
       text: 'UPDATE comments SET deleted=TRUE WHERE id=$1 RETURNING id',
-      values: [commentId]
+      values: [commentid]
     }
 
     const { rows } = await this._pool.query(query)

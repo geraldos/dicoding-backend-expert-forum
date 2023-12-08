@@ -78,7 +78,7 @@ describe('CommentRepositoryPostgres', () => {
 
         // Assert
         await expect(commentRepositoryPostgres.verifyCommentAccess({
-          commentId: FAKE_COMMENT_ID,
+          commentid: FAKE_COMMENT_ID,
           owner: FAKE_OWNER_THREAD
         })).resolves.toBeUndefined()
       })
@@ -108,7 +108,7 @@ describe('CommentRepositoryPostgres', () => {
 
         const commentRepositoryPostgres = new CommentRepositoryPostgres(pool)
 
-        await expect(commentRepositoryPostgres.checkCommentExist({ threadId: FAKE_ID_THREAD, commentId: FAKE_COMMENT_ID }))
+        await expect(commentRepositoryPostgres.checkCommentExist({ threadId: FAKE_ID_THREAD, commentid: FAKE_COMMENT_ID }))
           .resolves.not.toThrowError()
       })
 
@@ -124,7 +124,7 @@ describe('CommentRepositoryPostgres', () => {
         // Assert
         await expect(commentRepositoryPostgres.checkCommentExist({
           threadId: FAKE_ID_THREAD,
-          commentId: `${FAKE_COMMENT_ID}4`
+          commentid: `${FAKE_COMMENT_ID}4`
         })).rejects.toThrowError(ERR_MSG_COMMENT_NOT_FOUND_IN_THREAD)
       })
     })
@@ -141,7 +141,7 @@ describe('CommentRepositoryPostgres', () => {
 
         // Assert
         await expect(commentRepositoryPostgres.checkCommentBelongsToThread({
-          threadId: FAKE_ID_THREAD, commentId: FAKE_COMMENT_ID
+          threadId: FAKE_ID_THREAD, commentid: FAKE_COMMENT_ID
         })).resolves.not.toThrow()
       })
 
@@ -157,7 +157,7 @@ describe('CommentRepositoryPostgres', () => {
         // Assert
         await expect(commentRepositoryPostgres.checkCommentBelongsToThread({
           threadId: FAKE_ID_THREAD,
-          commentId: `${FAKE_COMMENT_ID}4`
+          commentid: `${FAKE_COMMENT_ID}4`
         })).rejects.toThrowError(ERR_MSG_COMMENT_NOT_FOUND_BELONG_THREAD)
       })
     })

@@ -14,7 +14,8 @@ const {
   FAKE_COMMENT_ID,
   FAKE_COMMENT_CONTENT,
   FAKE_REPLY_ID,
-  FAKE_REPLY_CONTENT
+  FAKE_REPLY_CONTENT,
+  FAKE_ARRAY_COMMENT
 } = require('../../../Commons/utils/CommonConstanta')
 const ReplyRepository = require('../../../Domains/replies/ReplyRepository')
 
@@ -28,10 +29,11 @@ describe('GetDetailThreadUseCase', () => {
     const expectedDetailReply = [
       new DetailReply({
         id: FAKE_REPLY_ID,
-        commentId: FAKE_COMMENT_ID,
+        commentid: FAKE_COMMENT_ID,
         content: FAKE_REPLY_CONTENT,
         date: FAKE_DATE_THREAD,
-        username: `${FAKE_USERNAME} geraldo`
+        username: `${FAKE_USERNAME} geraldo`,
+        deleted: true
       })
     ]
 
@@ -52,7 +54,7 @@ describe('GetDetailThreadUseCase', () => {
       body: FAKE_BODY_THREAD,
       date: FAKE_DATE_THREAD,
       username: FAKE_USERNAME,
-      comments: expectedComment
+      comments: FAKE_ARRAY_COMMENT
     })
 
     const mockThreadRepository = new ThreadRepository()
@@ -60,15 +62,15 @@ describe('GetDetailThreadUseCase', () => {
     const mockReplyRepository = new ReplyRepository()
 
     mockThreadRepository.getThreadById = jest.fn(() => (expectedDetailThread))
-    mockCommentRepository.getCommentByThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve(expectedComment))
-    mockCommentRepository.getCommentByThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve(expectedComment.map(comment => {
-        comment.content = comment.deleted ? '**komentar telah dihapus**' : comment.content
-        return comment
-      })))
-    mockReplyRepository.getRepliesByThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve(expectedDetailReply))
+    mockCommentRepository.getCommentByThreadId = jest.fn(() => expectedComment)
+    mockCommentRepository.getCommentByThreadId = jest.fn(() => Promise.resolve(expectedComment.map(comment => {
+      comment.content = comment.deleted ? '**komentar telah dihapus**' : comment.content
+      return comment
+    })))
+    mockReplyRepository.getRepliesByThreadId = jest.fn(() => Promise.resolve(expectedDetailReply.map(reply => {
+      reply.content = reply.deleted ? '**balasan telah dihapus**' : reply.content
+      return reply
+    })))
 
     const getDetailThreadUseCase = new GetDetailThreadUseCase({
       threadRepository: mockThreadRepository,

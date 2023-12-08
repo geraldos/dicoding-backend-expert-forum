@@ -1,7 +1,5 @@
 const AddComment = require('../../Domains/comments/entities/AddComment')
 
-const { FAKE_DATE_THREAD } = require('../../Commons/utils/CommonConstanta')
-
 class AddCommentUseCase {
   constructor ({ commentRepository, threadRepository }) {
     this._commentRepository = commentRepository
@@ -15,7 +13,7 @@ class AddCommentUseCase {
       threadId: useCaseParams.threadId,
       owner: userId,
       ...useCasePayload,
-      date: FAKE_DATE_THREAD
+      date: new Date().toISOString()
     })
 
     return this._commentRepository.addComment(addComment)

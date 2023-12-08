@@ -4,12 +4,12 @@ class DeleteCommentUseCase {
   }
 
   async execute (useCaseParams, useCaseHeader) {
-    const { commentId, threadId } = useCaseParams
+    const { commentid, threadId } = useCaseParams
     const owner = useCaseHeader
 
-    await this._commentRepository.checkCommentExist({ threadId, commentId })
-    await this._commentRepository.verifyCommentAccess({ commentId, owner })
-    await this._commentRepository.deleteCommentById(commentId)
+    await this._commentRepository.checkCommentExist({ threadId, commentid })
+    await this._commentRepository.verifyCommentAccess({ commentid, owner })
+    await this._commentRepository.deleteCommentById(commentid)
   }
 }
 

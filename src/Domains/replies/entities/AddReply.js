@@ -16,23 +16,23 @@ class AddReply {
   constructor (payload) {
     this._verifyPayload(payload)
 
-    const { commentId, owner, content, date } = payload
-    this.commentId = commentId
+    const { commentid, owner, content, date } = payload
+    this.commentid = commentid
     this.owner = owner
     this.content = content
     this.date = date
   }
 
   _verifyPayload (payload) {
-    const { commentId, owner, content, date } = payload
+    const { commentid, owner, content, date } = payload
 
-    if (!commentId || !owner || !content || !date) throw new Error(ERR_ADD_REPLY_NEED_PROPERTY)
+    if (!commentid || !owner || !content || !date) throw new Error(ERR_ADD_REPLY_NEED_PROPERTY)
     if (verifyDataTypeString(payload)) throw new Error(ERR_ADD_REPLY_DATA_TYPE_SPECIFICATION)
 
-    if (verifyLengthCharacter(commentId, 50)) throw new Error(ERR_ADD_REPLY_COMMENT_ID_LIMIT_CHARACTER)
+    if (verifyLengthCharacter(commentid, 50)) throw new Error(ERR_ADD_REPLY_COMMENT_ID_LIMIT_CHARACTER)
     if (verifyLengthCharacter(owner, 30)) throw new Error(ERR_ADD_REPLY_OWNER_LIMIT_CHARACTER)
 
-    if (verifyContainWhiteSpace(commentId)) throw new Error(ERR_ADD_REPLY_COMMENT_ID_WITH_WHITE_SPACE)
+    if (verifyContainWhiteSpace(commentid)) throw new Error(ERR_ADD_REPLY_COMMENT_ID_WITH_WHITE_SPACE)
     if (verifyContainWhiteSpace(owner)) throw new Error(ERR_ADD_REPLY_OWNER_WITH_WHITE_SPACE)
   }
 }

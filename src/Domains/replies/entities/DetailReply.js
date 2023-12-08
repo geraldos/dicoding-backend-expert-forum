@@ -1,4 +1,4 @@
-const { verifyDataTypeString } = require('../../../Commons/utils/CommonFunction')
+const { verifyDataTypeString, verifyDataTypeBoolean } = require('../../../Commons/utils/CommonFunction')
 
 const {
   ERR_DETAIL_REPLY_NOT_CONTAIN_NEEDED_PROPERTY,
@@ -13,20 +13,24 @@ class DetailReply {
       id,
       username,
       date,
-      content
+      content,
+      commentid,
+      deleted
     } = payload
 
     this.id = id
     this.username = username
     this.date = date
     this.content = content
+    this.commentid = commentid
+    this.deleted = deleted
   }
 
   _verifyPayload (payload) {
-    const { id, username, date, content } = payload
+    const { id, username, date, content, commentid, deleted } = payload
 
     if (!id || !username || !date || !content) throw new Error(ERR_DETAIL_REPLY_NOT_CONTAIN_NEEDED_PROPERTY)
-    if (verifyDataTypeString({ id, username, date, content })) throw new Error(ERR_DETAIL_REPLY_NOT_MEET_DATA_SPECIFICATION)
+    if (verifyDataTypeString({ id, username, date, content, commentid }) && verifyDataTypeBoolean({ deleted })) throw new Error(ERR_DETAIL_REPLY_NOT_MEET_DATA_SPECIFICATION)
   }
 }
 

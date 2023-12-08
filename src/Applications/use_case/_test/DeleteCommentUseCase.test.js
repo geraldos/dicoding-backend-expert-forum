@@ -14,15 +14,15 @@ describe('DeleteCommentUseCase', () => {
 
     const useCaseParams = {
       threadId: FAKE_ID_THREAD,
-      commentId: FAKE_COMMENT_ID
+      commentid: FAKE_COMMENT_ID
     }
     const expectedCheckComment = {
       threadId: useCaseParams.threadId,
-      commentId: useCaseParams.commentId
+      commentid: useCaseParams.commentid
     }
     const expectedVerifyCommentAccess = {
       owner: FAKE_OWNER_THREAD,
-      commentId: useCaseParams.commentId
+      commentid: useCaseParams.commentid
     }
     const expectedDeletedComment = {
       id: FAKE_COMMENT_ID

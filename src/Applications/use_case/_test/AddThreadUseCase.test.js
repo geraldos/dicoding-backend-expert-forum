@@ -7,8 +7,7 @@ const {
   FAKE_TITLE_THREAD,
   FAKE_BODY_THREAD,
   FAKE_ID_THREAD,
-  FAKE_OWNER_THREAD,
-  FAKE_DATE_THREAD
+  FAKE_OWNER_THREAD
 } = require('../../../Commons/utils/CommonConstanta')
 
 describe('AddThreadUseCase', () => {
@@ -27,15 +26,15 @@ describe('AddThreadUseCase', () => {
       title: useCasePayload.title,
       body: useCasePayload.body,
       owner: FAKE_OWNER_THREAD,
-      date: FAKE_DATE_THREAD
+      date: new Date().toISOString()
     })
 
     /** arrange creating dependency of use case */
     const mockThreadRepository = new ThreadRepository()
 
     /** arrange mocking needed function */
-
-    mockThreadRepository.addThread = jest.fn(() => expectedAddedThread)
+    mockThreadRepository.addThread = jest.fn()
+      .mockImplementation(() => Promise.resolve(expectedAddedThread))
 
     /* arrange creating use case instance */
     const addThreadUseCase = new AddThreadUseCase({

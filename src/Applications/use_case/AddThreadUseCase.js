@@ -1,7 +1,5 @@
 const AddThread = require('../../Domains/threads/entities/AddThread')
 
-const { FAKE_DATE_THREAD } = require('../../Commons/utils/CommonConstanta')
-
 class AddThreadUseCase {
   constructor ({ threadRepository }) {
     this._threadRepository = threadRepository
@@ -11,7 +9,7 @@ class AddThreadUseCase {
     const addThread = new AddThread({
       ...useCasePayload,
       owner: userId,
-      date: FAKE_DATE_THREAD
+      date: new Date().toISOString()
     })
 
     return this._threadRepository.addThread(addThread)

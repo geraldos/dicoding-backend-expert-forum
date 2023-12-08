@@ -20,7 +20,7 @@ describe('a AddReply entities', () => {
   it('should throw error when payload did not contain needed property', () => {
     // Arrange
     const payload = {
-      commentId: FAKE_COMMENT_ID,
+      commentid: FAKE_COMMENT_ID,
       owner: FAKE_OWNER_THREAD,
       content: FAKE_REPLY_CONTENT
     }
@@ -32,7 +32,7 @@ describe('a AddReply entities', () => {
   it('should throw error when payload did not meet data type specification', () => {
     // Arrange
     const payload = {
-      commentId: FAKE_COMMENT_ID,
+      commentid: FAKE_COMMENT_ID,
       owner: FAKE_OWNER_THREAD,
       content: FAKE_REPLY_CONTENT,
       date: true
@@ -45,7 +45,7 @@ describe('a AddReply entities', () => {
   it('should throw error when threadId contains more than 50 character', () => {
     // Arrange
     const payload = {
-      commentId: FAKE_VALUE_GREATER_THAN_LIMIT,
+      commentid: FAKE_VALUE_GREATER_THAN_LIMIT,
       owner: FAKE_OWNER_THREAD,
       content: FAKE_REPLY_CONTENT,
       date: FAKE_DATE_THREAD
@@ -58,7 +58,7 @@ describe('a AddReply entities', () => {
   it('should throw error when owner contains more than 30 character', () => {
     // Arrange
     const payload = {
-      commentId: FAKE_COMMENT_ID,
+      commentid: FAKE_COMMENT_ID,
       owner: FAKE_VALUE_GREATER_THAN_LIMIT,
       content: FAKE_REPLY_CONTENT,
       date: FAKE_DATE_THREAD
@@ -68,10 +68,10 @@ describe('a AddReply entities', () => {
     expect(() => new AddReply(payload)).toThrowError(ERR_ADD_REPLY_OWNER_LIMIT_CHARACTER)
   })
 
-  it('should throw error when commentId contains white space character', () => {
+  it('should throw error when commentid contains white space character', () => {
     // Arrange
     const payload = {
-      commentId: FAKE_ID_WITH_WHITE_SPACE,
+      commentid: FAKE_ID_WITH_WHITE_SPACE,
       owner: FAKE_OWNER_THREAD,
       content: FAKE_REPLY_CONTENT,
       date: FAKE_DATE_THREAD
@@ -84,7 +84,7 @@ describe('a AddReply entities', () => {
   it('should throw error when owner contains white space character', () => {
     // Arrange
     const payload = {
-      commentId: FAKE_COMMENT_ID,
+      commentid: FAKE_COMMENT_ID,
       owner: FAKE_OWNER_WITH_WHITE_SPACE,
       content: FAKE_REPLY_CONTENT,
       date: FAKE_DATE_THREAD
@@ -97,17 +97,17 @@ describe('a AddReply entities', () => {
   it('should create AddReply object correctly', () => {
     // Arrange
     const payload = {
-      commentId: FAKE_COMMENT_ID,
+      commentid: FAKE_COMMENT_ID,
       owner: FAKE_OWNER_THREAD,
       content: FAKE_REPLY_CONTENT,
       date: FAKE_DATE_THREAD
     }
 
     // Action
-    const { commentId, owner, content, date } = new AddReply(payload)
+    const { commentid, owner, content, date } = new AddReply(payload)
 
     // Assert
-    expect(commentId).toEqual(payload.commentId)
+    expect(commentid).toEqual(payload.commentid)
     expect(owner).toEqual(payload.owner)
     expect(content).toEqual(payload.content)
     expect(date).toEqual(payload.date)

@@ -15,12 +15,12 @@ describe('DeleteReplyUseCase', () => {
 
     const useCaseParams = {
       threadId: FAKE_ID_THREAD,
-      commentId: FAKE_COMMENT_ID,
+      commentid: FAKE_COMMENT_ID,
       replyId: FAKE_REPLY_ID
     }
     const expectedCheckReply = {
       threadId: useCaseParams.threadId,
-      commentId: useCaseParams.commentId,
+      commentid: useCaseParams.commentid,
       replyId: useCaseParams.replyId
     }
     const expectedVerifyReplyAccess = {

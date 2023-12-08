@@ -157,21 +157,21 @@ describe('/threads with comment', () => {
     })
   })
 
-  describe('when DELETE /threads/{threadId}/comments/{commentId}', () => {
+  describe('when DELETE /threads/{threadId}/comments/{commentid}', () => {
     it('should response 200 and return status success', async () => {
       // Arrange
       const server = await createServer(container)
       const threadId = FAKE_ID_THREAD
-      const commentId = FAKE_COMMENT_ID
+      const commentid = FAKE_COMMENT_ID
       const { accessToken, id } = await AuthenticationsTableTestHelper.getAccessToken({ server })
 
       await ThreadsTableTestHelper.addThread({ id: threadId, owner: id })
-      await CommentsTableTestHelper.addComment({ id: commentId, owner: id })
+      await CommentsTableTestHelper.addComment({ id: commentid, owner: id })
 
       // Action
       const response = await server.inject({
         method: 'DELETE',
-        url: `/threads/${threadId}/comments/${commentId}`,
+        url: `/threads/${threadId}/comments/${commentid}`,
         headers: {
           Authorization: `Bearer ${accessToken}`
         }
@@ -188,18 +188,18 @@ describe('/threads with comment', () => {
       // Arrange
       const server = await createServer(container)
       const threadId = FAKE_ID_THREAD
-      const commentId = FAKE_COMMENT_ID
+      const commentid = FAKE_COMMENT_ID
       const { id } = await AuthenticationsTableTestHelper.getAccessToken({ server, username: 'dino' })
 
       await ThreadsTableTestHelper.addThread({ id: threadId, owner: id })
-      await CommentsTableTestHelper.addComment({ id: commentId, owner: id })
+      await CommentsTableTestHelper.addComment({ id: commentid, owner: id })
 
       const { accessToken } = await AuthenticationsTableTestHelper.getAccessToken({ server, username: 'Lai' })
 
       // Action
       const response = await server.inject({
         method: 'DELETE',
-        url: `/threads/${threadId}/comments/${commentId}`,
+        url: `/threads/${threadId}/comments/${commentid}`,
         headers: {
           Authorization: `Bearer ${accessToken}`
         }
@@ -219,16 +219,16 @@ describe('/threads with comment', () => {
       // Arrange
       const server = await createServer(container)
       const threadId = FAKE_ID_THREAD
-      const commentId = FAKE_COMMENT_ID
+      const commentid = FAKE_COMMENT_ID
       const { accessToken, id } = await AuthenticationsTableTestHelper.getAccessToken({ server })
 
       await ThreadsTableTestHelper.addThread({ id: threadId, owner: id })
-      await CommentsTableTestHelper.addComment({ id: commentId, owner: id })
+      await CommentsTableTestHelper.addComment({ id: commentid, owner: id })
 
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: `/threads/${threadId}4/comments/${commentId}`,
+        url: `/threads/${threadId}4/comments/${commentid}`,
         headers: {
           Authorization: `Bearer ${accessToken}`
         }
